@@ -16,5 +16,5 @@ Key points:
   contains in YAML config with method `add_params_desc`
 - Use `parse_args` method to run (use `verbose` option to manage parser silence). 
   Output dict will have the same structure as the input dict parsed from YAML config
-- See an example [here]()
+- See an example [here](https://github.com/gorodnitskiy/advanced_parser/tree/master/example)
 - For installing use: `pip install -e path_to_advanced_parser_folder`
