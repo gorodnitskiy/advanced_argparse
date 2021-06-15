@@ -92,7 +92,7 @@ class AdvancedParser:
         if arg_value != parser_args[curr_name]:
             if verbose:
                 AdvancedParser._cls_logging_(
-                    '{}: CHANGED: {} -> {}'.format(
+                    '{}: **CHANGED**: {} -> {}'.format(
                         curr_name, arg_value, parser_args[curr_name]),
                     logger=self._logger
                 )
@@ -140,7 +140,7 @@ class AdvancedParser:
         parser_args, unknown = arg_parser.parse_known_args()
         if verbose and unknown:
             AdvancedParser._cls_logging_(
-                'SOME ARGS ARE UNKNOWN: {}'.format(unknown),
+                '**SOME ARGS ARE UNKNOWN**: {}'.format(unknown),
                 logger=self._logger
             )
 
