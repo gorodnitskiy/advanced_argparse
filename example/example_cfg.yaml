@@ -4,10 +4,10 @@ LD_LIBRARY_PATH: /opt/python/virtualenv/jupyter/lib
 PYSPARK_PYTHON: /opt/cloudera/parcels/PYENV.AUTOML/bin/python
 PYSPARK_DRIVER_PYTHON_PACKAGE: python/lib/py4j-0.10.7-src.zip
 APPLICATION_NAME: clustering_model_pilot
-spark_conf:
+spark_conf_medium:
   spark.driver.memory: 24g
   spark.driver.maxResultSize: 24g
-  spark.executor.memory: 3g
+  spark.executor.memory: 4g
   spark.executor.memoryOverhead: 1g
   spark.port.maxRetries: 400
   spark.yarn.access.hadoopFileSystems: hdfs://nsld3:8020/,hdfs://clsklsbx:8020/,hdfs://CloudBDA:8020/
@@ -16,6 +16,32 @@ spark_conf:
   spark.dynamicAllocation.enabled: true
   spark.dynamicAllocation.minExecutors: 0
   spark.dynamicAllocation.maxExecutors: 60
+  spark.dynamicAllocation.executorIdleTimeout: 180s
+  spark.kryoserializer.buffer.max: 256M
+  hive.exec.dynamic.partition.mode: nonstrict
+  hive.exec.dynamic.partition: true
+  spark.sql.hive.convertMetastoreParquet: false
+  spark.sql.broadcastTimeout: 36000
+  hive.auto.convert.join: false
+  dfs.replication: 2
+  parquet.compression: snappy
+  spark.cleaner.periodicGC.interval: 150s
+  spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation: true
+  spark.sql.crossJoin.enabled: true
+  spark.executor.heartbeatInterval: 2000000
+  spark.network.timeout: 1000000
+spark_conf_low:
+  spark.driver.memory: 12g
+  spark.driver.maxResultSize: 12g
+  spark.executor.memory: 3g
+  spark.executor.memoryOverhead: 1g
+  spark.port.maxRetries: 400
+  spark.yarn.access.hadoopFileSystems: hdfs://nsld3:8020/,hdfs://clsklsbx:8020/,hdfs://CloudBDA:8020/
+  spark.executor.cores: 1
+  spark.sql.shuffle.partitions: 200
+  spark.dynamicAllocation.enabled: true
+  spark.dynamicAllocation.minExecutors: 0
+  spark.dynamicAllocation.maxExecutors: 30
   spark.dynamicAllocation.executorIdleTimeout: 180s
   spark.kryoserializer.buffer.max: 256M
   hive.exec.dynamic.partition.mode: nonstrict

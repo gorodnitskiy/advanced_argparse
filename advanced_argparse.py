@@ -36,9 +36,11 @@ class AdvancedParser:
         self,
         cfg: Union[str, Dict[str, Any]],
         yaml_loader: Optional[yaml.Loader] = None,
+        delimiter: str = '___',
         logger: Any = None
     ) -> None:
-        self.logger = logger
+        self._logger = logger
+        self._delimiter = delimiter
         if yaml_loader is None:
             yaml_loader = yaml.SafeLoader
 
@@ -58,6 +60,10 @@ class AdvancedParser:
     def add_params_desc(cls, args_desc: Dict[str, Any]) -> None:
         cls.args_desc.update(args_desc)
 
+    @classmethod
+    def set_delimiter(cls, delimiter: str) -> None:
+        cls._delimiter = delimiter
+
     @property
     def config(self) -> Dict[str, Any]:
         return self.default_cfg
@@ -76,34 +82,44 @@ class AdvancedParser:
         parser_args: Dict[str, Any],
         base_args: Dict[str, Any],
         verbose: bool,
-        level: str = ''
+        high_arg_name: Optional[str] = None
     ) -> None:
-        if level:
-            level += ' '
-        level += 'Argument'
-        if arg_value != parser_args[arg_name]:
+        if high_arg_name:
+            curr_name = ''.join([high_arg_name, self._delimiter, arg_name])
+        else:
+            curr_name = arg_name
+
+        if arg_value != parser_args[curr_name]:
             if verbose:
                 AdvancedParser._cls_logging_(
-                    '{} {}: CHANGED: {} -> {}'.format(
-                        level, arg_name, arg_value, parser_args[arg_name]),
-                    logger=self.logger
+                    '{}: CHANGED: {} -> {}'.format(
+                        curr_name, arg_value, parser_args[curr_name]),
+                    logger=self._logger
                 )
-            base_args[arg_name] = parser_args[arg_name]
+            base_args[arg_name] = parser_args[curr_name]
 
         else:
             if verbose:
                 AdvancedParser._cls_logging_(
-                    '{} {}: {}'.format(level, arg_name, arg_value),
-                    logger=self.logger
+                    '{}: {}'.format(curr_name, arg_value),
+                    logger=self._logger
                 )
 
-    def parse_args(self, verbose: bool = False) -> Dict[str, Any]:
+    def parse_args(
+        self,
+        verbose: bool = False,
+        delimiter: Optional[str] = None
+    ) -> Dict[str, Any]:
+        if delimiter:
+            self.set_delimiter(delimiter)
+
         default_cfg = copy.deepcopy(self.default_cfg)
         flat_cfg = {}
         for arg_name, arg_value in default_cfg.items():
             if isinstance(arg_value, dict):
                 for sub_arg_name, sub_arg_value in arg_value.items():
-                    flat_cfg[sub_arg_name] = sub_arg_value
+                    arg_name_long = ''.join([arg_name, self._delimiter, sub_arg_name])
+                    flat_cfg[arg_name_long] = sub_arg_value
 
             else:
                 flat_cfg[arg_name] = arg_value
@@ -125,7 +141,7 @@ class AdvancedParser:
         if verbose and unknown:
             AdvancedParser._cls_logging_(
                 'SOME ARGS ARE UNKNOWN: {}'.format(unknown),
-                logger=self.logger
+                logger=self._logger
             )
 
         parser_args_dict = vars(parser_args)
@@ -133,16 +149,14 @@ class AdvancedParser:
             if isinstance(arg_value, dict):
                 for sub_arg_name, sub_arg_value in arg_value.items():
                     AdvancedParser._replace_values_(
-                        self, sub_arg_name, sub_arg_value,
-                        parser_args_dict, arg_value, verbose,
-                        level='Sub'
+                        self, sub_arg_name, sub_arg_value, parser_args_dict,
+                        arg_value, verbose, high_arg_name=arg_name
                     )
 
             else:
                 AdvancedParser._replace_values_(
-                    self, arg_name, arg_value,
-                    parser_args_dict, default_cfg,
-                    verbose
+                    self, arg_name, arg_value, parser_args_dict,
+                    default_cfg, verbose
                 )
 
         return default_cfg
