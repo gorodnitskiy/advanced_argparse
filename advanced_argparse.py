@@ -9,7 +9,7 @@ import yaml
 def yaml_parser(
     path: Optional[str] = None,
     data: Optional[str] = None,
-    loader: yaml.Loader = yaml.SafeLoader
+    loader: Any = yaml.SafeLoader
 ) -> Dict[str, Any]:
     if path:
         with open(r'{}'.format(path)) as file:
@@ -20,6 +20,16 @@ def yaml_parser(
 
     else:
         raise ValueError('Either a path or data should be defined as input')
+
+
+class PrettySafeLoader(yaml.SafeLoader):
+    def construct_python_tuple(self, node):
+        return tuple(self.construct_sequence(node))
+
+
+PrettySafeLoader.add_constructor(
+    u'tag:yaml.org,2002:python/tuple',
+    PrettySafeLoader.construct_python_tuple)
 
 
 class AdvancedParser:
@@ -35,14 +45,14 @@ class AdvancedParser:
     def __init__(
         self,
         cfg: Union[str, Dict[str, Any]],
-        yaml_loader: Optional[yaml.Loader] = None,
+        yaml_loader: Optional[Any] = None,
         delimiter: str = '___',
         logger: Any = None
     ) -> None:
         self._logger = logger
         self._delimiter = delimiter
         if yaml_loader is None:
-            yaml_loader = yaml.SafeLoader
+            yaml_loader = PrettySafeLoader
 
         if isinstance(cfg, str):
             self.default_cfg = yaml_parser(
