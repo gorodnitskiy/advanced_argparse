@@ -9,7 +9,7 @@
 
 ##########################
 # Common files
-
+run_test_build.sh
 
 # IntelliJ
 .idea/

@@ -1,17 +1,8 @@
-import os
-import os.path
 from setuptools import find_packages
 from setuptools import setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
-
-
-def find_requires():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    with open('{0}/requirements.txt'.format(dir_path), 'r') as reqs:
-        requirements = reqs.readlines()
-    return requirements
 
 
 if __name__ == "__main__":
@@ -21,6 +12,7 @@ if __name__ == "__main__":
         author="Alex Gorodnitskiy",
         author_email="alexander.gorodnitskiy@phystech.edu",
         description='Advanced parser based on argparse and YAML config',
+        url="https://github.com/gorodnitskiy/advanced_parser",
         long_description=long_description,
         long_description_content_type="text/markdown",
         packages=find_packages(),
@@ -29,6 +21,8 @@ if __name__ == "__main__":
             "License :: OSI Approved :: MIT License",
             "Operating System :: OS Independent",
         ],
-        install_requires=find_requires(),
+        install_requires=["PyYAML"],
+        setup_requires=['pytest-runner', 'flake8'],
+        tests_require=['pytest'],
         include_package_data=True
     )
