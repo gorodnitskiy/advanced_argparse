@@ -15,7 +15,7 @@ if __name__ == "__main__":
         url="https://github.com/gorodnitskiy/advanced_parser",
         long_description=long_description,
         long_description_content_type="text/markdown",
-        packages=find_packages(),
+        packages=find_packages('advanced_argparse'),
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",
