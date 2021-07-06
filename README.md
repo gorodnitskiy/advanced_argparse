@@ -17,4 +17,8 @@ Key points:
 - Use `parse_args` method to run (use `verbose` option to manage parser silence). 
   Output dict will have the same structure as the input dict parsed from YAML config
 - See an example [here](https://github.com/gorodnitskiy/advanced_parser/tree/master/example)
-- For installing use: `pip install /path/to/advanced_argparse`
+- For installing use:
+  ```
+  git clone https://github.com/gorodnitskiy/advanced_argparse.git
+  pip isntall /path/to/advanced_argparse/
+  ```
