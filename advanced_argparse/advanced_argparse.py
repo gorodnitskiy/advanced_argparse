@@ -1,25 +1,25 @@
-from typing import Dict, Any, Optional, Union
-
-from collections import defaultdict
-import copy
 import argparse
+import copy
+from collections import defaultdict
+from typing import Any, Dict, Optional, Union
+
 import yaml
 
 
 def yaml_parser(
     path: Optional[str] = None,
     data: Optional[str] = None,
-    loader: Any = yaml.SafeLoader
+    loader: Any = yaml.SafeLoader,
 ) -> Dict[str, Any]:
     if path:
-        with open(r'{}'.format(path)) as file:
+        with open(r"{}".format(path)) as file:
             return yaml.load(file, Loader=loader)
 
     elif data:
         return yaml.load(data, Loader=loader)
 
     else:
-        raise ValueError('Either a path or data should be defined as input')
+        raise ValueError("Either a path or data should be defined as input")
 
 
 class PrettySafeLoader(yaml.SafeLoader):
@@ -28,8 +28,8 @@ class PrettySafeLoader(yaml.SafeLoader):
 
 
 PrettySafeLoader.add_constructor(
-    u'tag:yaml.org,2002:python/tuple',
-    PrettySafeLoader.construct_python_tuple)
+    "tag:yaml.org,2002:python/tuple", PrettySafeLoader.construct_python_tuple
+)
 
 
 class AdvancedParser:
@@ -46,8 +46,8 @@ class AdvancedParser:
         self,
         cfg: Union[str, Dict[str, Any]],
         yaml_loader: Optional[Any] = None,
-        delimiter: str = '___',
-        logger: Any = None
+        delimiter: str = "___",
+        logger: Any = None,
     ) -> None:
         self._logger = logger
         self._delimiter = delimiter
@@ -55,10 +55,7 @@ class AdvancedParser:
             yaml_loader = PrettySafeLoader
 
         if isinstance(cfg, str):
-            self.default_cfg = yaml_parser(
-                path=cfg,
-                loader=yaml_loader
-            )
+            self.default_cfg = yaml_parser(path=cfg, loader=yaml_loader)
         else:
             self.default_cfg = cfg
 
@@ -92,33 +89,31 @@ class AdvancedParser:
         parser_args: Dict[str, Any],
         base_args: Dict[str, Any],
         verbose: bool,
-        high_arg_name: Optional[str] = None
+        high_arg_name: Optional[str] = None,
     ) -> None:
         if high_arg_name:
-            curr_name = ''.join([high_arg_name, self._delimiter, arg_name])
+            curr_name = "".join([high_arg_name, self._delimiter, arg_name])
         else:
             curr_name = arg_name
 
         if arg_value != parser_args[curr_name]:
             if verbose:
                 AdvancedParser._cls_logging_(
-                    '{}: **CHANGED**: {} -> {}'.format(
-                        curr_name, arg_value, parser_args[curr_name]),
-                    logger=self._logger
+                    "{}: **CHANGED**: {} -> {}".format(
+                        curr_name, arg_value, parser_args[curr_name]
+                    ),
+                    logger=self._logger,
                 )
             base_args[arg_name] = parser_args[curr_name]
 
         else:
             if verbose:
                 AdvancedParser._cls_logging_(
-                    '{}: {}'.format(curr_name, arg_value),
-                    logger=self._logger
+                    "{}: {}".format(curr_name, arg_value), logger=self._logger
                 )
 
     def parse_args(
-        self,
-        verbose: bool = False,
-        delimiter: Optional[str] = None
+        self, verbose: bool = False, delimiter: Optional[str] = None
     ) -> Dict[str, Any]:
         if delimiter:
             self.set_delimiter(delimiter)
@@ -128,7 +123,9 @@ class AdvancedParser:
         for arg_name, arg_value in default_cfg.items():
             if isinstance(arg_value, dict):
                 for sub_arg_name, sub_arg_value in arg_value.items():
-                    arg_name_long = ''.join([arg_name, self._delimiter, sub_arg_name])
+                    arg_name_long = "".join(
+                        [arg_name, self._delimiter, sub_arg_name]
+                    )
                     flat_cfg[arg_name_long] = sub_arg_value
 
             else:
@@ -140,18 +137,18 @@ class AdvancedParser:
             if param_desc is not None:
                 param_desc = str(param_desc)
             arg_parser.add_argument(
-                '--{}'.format(arg_name),
-                metavar='<{}>'.format(arg_name),
+                "--{}".format(arg_name),
+                metavar="<{}>".format(arg_name),
                 default=arg_value,
                 type=type(arg_value),
-                help=param_desc
+                help=param_desc,
             )
 
         parser_args, unknown = arg_parser.parse_known_args()
         if verbose and unknown:
             AdvancedParser._cls_logging_(
-                '**SOME ARGS ARE UNKNOWN**: {}'.format(unknown),
-                logger=self._logger
+                "**SOME ARGS ARE UNKNOWN**: {}".format(unknown),
+                logger=self._logger,
             )
 
         parser_args_dict = vars(parser_args)
@@ -159,14 +156,23 @@ class AdvancedParser:
             if isinstance(arg_value, dict):
                 for sub_arg_name, sub_arg_value in arg_value.items():
                     AdvancedParser._replace_values_(
-                        self, sub_arg_name, sub_arg_value, parser_args_dict,
-                        arg_value, verbose, high_arg_name=arg_name
+                        self,
+                        sub_arg_name,
+                        sub_arg_value,
+                        parser_args_dict,
+                        arg_value,
+                        verbose,
+                        high_arg_name=arg_name,
                     )
 
             else:
                 AdvancedParser._replace_values_(
-                    self, arg_name, arg_value, parser_args_dict,
-                    default_cfg, verbose
+                    self,
+                    arg_name,
+                    arg_value,
+                    parser_args_dict,
+                    default_cfg,
+                    verbose,
                 )
 
         return default_cfg
