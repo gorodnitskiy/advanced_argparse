@@ -3,13 +3,14 @@
 # Custom
 *.gz
 *.zip
+*.md-e
 
 # also keep all .gitkeep files
 !.gitkeep
 
 ##########################
 # Common files
-run_test_build.sh
+pre_commit_hooks.sh
 
 # IntelliJ
 .idea/
@@ -29,7 +30,6 @@ out/
 .*.swp
 
 # emacs
-*~
 \#*\#
 /.emacs.desktop
 /.emacs.desktop.lock
