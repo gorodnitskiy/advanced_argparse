@@ -1,1 +1,1 @@
-from .advanced_argparse import AdvancedParser, yaml_parser
+from .advanced_argparse import AdvancedParser, yaml_parser, PrettySafeLoader
